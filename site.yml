@@ -1,0 +1,49 @@
+---
+
+- name: Configuration du serveur Web LAMP (Apache + PHP)  # Titre descriptif du playbook
+  hosts: webservers                                        # Cible le groupe [webservers] défini dans inventory.ini
+  become: true                                             # Active les droits d'administration (root)
+  become_method: sudo                                      # Utilise la commande 'sudo' pour l'élévation de privilèges
+
+  tasks:
+
+    # 1. Mise à jour de l'index des paquets APT (équivalent de: sudo apt update)
+    - name: Mettre a jour l'index des paquets apt
+      apt:
+        update_cache: yes       # Rafraîchit le catalogue des paquets disponibles
+        cache_valid_time: 3600  # Ignore cette étape si l'index  a   été mis à jour il y a moins de 1h 
+
+    # 2. Mise à jour des paquets système (équivalent de: sudo apt upgrade)
+    - name: Mettre a jour tous les paquets installes
+      apt:
+        upgrade: dist           # Effectue la mise à jour complète de tous les paquets installés
+
+    # 3. Installation des paquets logiciels pour le serveur Web
+    - name: Installer Apache2, PHP et le module PHP pour Apache
+      apt:
+        name:
+          - apache2              # Le serveur web HTTP/HTTPS
+          - php                  # L'interpréteur de langage PHP
+          - libapache2-mod-php   # Le module faisant le lien entre Apache et PHP
+        state: present           # S'assure que ces paquets sont installés (si absents, Ansible les installe)
+
+    # 4. Gestion du service système Apache (équivalent de: systemctl start/enable)
+    - name: S'assurer que le service Apache est demarre et active au demarrage
+      service:
+        name: apache2
+        state: started          # S'assure que le service tourne actuellement (le démarre s'il est éteint)
+        enabled: yes            # Active le lancement automatique du service au démarrage de la machine
+
+    # 5. Création du fichier de test PHP dans la racine web (dossier /var/www/html/)
+    - name: Creer la page d'accueil de test index.php
+      copy:
+        dest: /var/www/html/index.php  # Chemin du fichier à créer sur le serveur cible
+        content: |                      # Le symbole '|' permet de définir un bloc de texte multi-lignes
+          <?php
+          echo "<h1>Bienvenue sur le serveur Web géré par Ansible !</h1>";
+          echo "<p>Projet Stage Sciensano - Serveur Ubuntu : " . $_SERVER['SERVER_ADDR'] . "</p>";
+          echo "<p>Version de PHP : " . phpversion() . "</p>";
+          ?>
+        owner: www-data                 # Propriétaire du fichier (compte système restreint d'Apache)
+        group: www-data                 # Groupe propriétaire du fichier
+        mode: '0644'                    # Permissions Linux : Lecture/Écriture pour www-data, Lecture seule pour les autres
