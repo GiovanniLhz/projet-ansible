@@ -38,6 +38,3 @@ Tester le résultat :
 curl http://192.168.56.101/index.php
 ```
 
-## Notes
-
-Si tu testes chez toi, pense à changer l'adresse IP et l'utilisateur dans `inventory.ini`.
