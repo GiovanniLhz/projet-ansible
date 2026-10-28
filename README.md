@@ -1,6 +1,13 @@
 # Automatisation d'une pile LAMP avec Ansible
 
-L'objectif de ce projet est de déployer et configurer de manière automatisée un serveur web Apache et son interpréteur PHP sur une VM Ubuntu Server, en s'appuyant sur un playbook Ansible. Le détail complet de ma démarche se trouve dans le [JOURNAL.md](JOURNAL.md).
+À partir d'une VM Ubuntu Server installée sur l'hyperviseur VirtualBox, ce projet permet de déployer la pile LAMP de manière automatisée avec Ansible. L'automatisation permet de refaire la même installation sans erreur et à chaque fois que j'en aurai besoin, au lieu de tout reconfigurer à la main. Le détail complet de ma démarche se trouve dans le [JOURNAL.md](JOURNAL.md).
+
+## Environnement
+
+* **OS :** Ubuntu Server 26.04.1 LTS (Long Term Support)
+* **Hyperviseur :** VirtualBox (type 2)
+* **Outil d'automatisation :** Ansible (version 2.16.3)
+* **Réseau :** Configuration de deux cartes réseau (NAT pour l'accès Internet et Host-Only avec IP statique `192.168.56.101` pour la connexion SSH du client vers la VM).
 
 ## Fichiers
 
